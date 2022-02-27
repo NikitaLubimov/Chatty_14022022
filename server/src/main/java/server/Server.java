@@ -44,20 +44,33 @@ public class Server {
         }
     }
 
-    public void broadcastMsg(ClientHandler sender,String msg){
+    public void broadcastMsg(ClientHandler sender, String msg) {
         String message = String.format("[%s]: %s", sender.getNickname(), msg);
 
         for (ClientHandler c : clients) {
             c.sendMsg(message);
         }
-
     }
 
-    public void subscribe(ClientHandler clientHandler){
+    public void unicastMsg(ClientHandler sender, String recipient, String msg) {
+        String message = String.format("[%s] to [%s]: %s", sender.getNickname(), recipient, msg);
+
+        for (ClientHandler c : clients) {
+            if (c.getNickname().equals(recipient)) {
+                c.sendMsg(message);
+                sender.sendMsg(message);
+                return;
+            }
+        }
+
+        sender.sendMsg("Клиент не найден");
+    }
+
+    public void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
     }
 
-    public void unsubscribe(ClientHandler clientHandler){
+    public void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
     }
 
