@@ -57,12 +57,22 @@ public class ClientHandler {
                     while (authenticated) {
                         String str = in.readUTF();
 
-                        if (str.equals("/end")) {
-                            sendMsg("/end");
-                            break;
-                        }
+                        if (str.startsWith("/")) {
+                            if (str.equals("/end")) {
+                                sendMsg("/end");
+                                break;
+                            }
+                            if (str.startsWith("/w")) {
+                                String[] token = str.split(" ", 3);
+                                if (token.length < 3) {
+                                    continue;
+                                }
+                                server.unicastMsg(this,token[1],token[2]);
+                            }
 
-                        server.broadcastMsg(this,str);
+                        } else {
+                            server.broadcastMsg(this, str);
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
